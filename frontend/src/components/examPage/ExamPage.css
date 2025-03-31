@@ -169,3 +169,32 @@
     right: 10px;
   }
 }
+
+/* Fullscreen Mode */
+.exam-container.fullscreen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: white;
+  overflow-y: auto;  /* Enable scrolling */
+  max-height: 100vh; /* Ensure it doesn't exceed the viewport */
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  padding: 20px;
+}
+
+/* Adjusted button for better visibility */
+button.fullscreen {
+  background-color: #4CAF50;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+button.fullscreen:hover {
+  background-color: #45a049;
+}

@@ -46,11 +46,6 @@
   border: 4px solid #007bff;
 }
 
-/* Test Performance Chart */
-.profile-chart {
-  text-align: center;
-  margin-top: 30px;
-}
 
 .profile-chart h2 {
   font-size: 22px;
@@ -206,50 +201,18 @@
   background: #555;
 }
 
-/* Responsive Styles */
-@media (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
-
-  .profile-info {
-    text-align: center;
-  }
-
-  .modal-content {
-    width: 80%;
-    padding: 15px;
-  }
-
-  .profile-page {
-    width: 100%;
-    padding: 20px;
-  }
-
-  .profile-image img {
-    width: 100px;
-    height: 100px;
-  }
-
-  .classroom-grid {
-    justify-content: center;
-  }
-}
 .profile-page {
-  width: calc(100% - 250px);
+  width: calc(100% - 10px); /* Adjust width considering the sidebar */
   padding: 40px;
   background: #f8f9fa;
-  position: absolute;
-  top: 80px;
-  right: 0;
-  height: auto;
-  min-height: 100vh;
+  position: relative;
+  min-height: 100vh; /* Ensures content expands */
   display: flex;
   flex-direction: column;
   align-items: center;
-}
+  justify-content: flex-start;
+  padding-bottom: 80px; /* Adds space for footer */
+}  
 
 .profile-container {
   display: flex;
@@ -297,7 +260,9 @@
 .profile-chart {
   text-align: center;
   margin-top: 30px;
-    
+  width: 100%;
+  max-width: 600px;
+  padding-bottom: 50px; /* Prevent overlap with footer */
 }
 
 .profile-chart h2 {
@@ -437,17 +402,12 @@
 }
 
 @media (max-width: 768px) {
-  .profile-container {
-    flex-direction: column;
-    align-items: center;
+  .profile-page {
+    width: 100%;
+    padding: 20px;
+    padding-bottom: 120px; /* Ensure space for footer */
   }
-
-  .profile-info {
-    text-align: center;
-  }
-
-  .modal-content {
-    width: 80%;
-    padding: 15px;
+  .profile-chart {
+    width: 90%;
   }
 }

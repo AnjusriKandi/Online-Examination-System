@@ -7,7 +7,7 @@ import Webcam from "react-webcam";
 import { useNavigate } from "react-router-dom";
 
 function ExamPage() {
-  const navigate=useNavigate();
+  const navigate = useNavigate();
   const { examId } = useParams();
   const [exam, setExam] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,6 +21,7 @@ function ExamPage() {
   const [showCameraModal, setShowCameraModal] = useState(false);
   const [userResponses, setUserResponses] = useState({});
   const [examResult, setExamResult] = useState(null);
+  const [examStarted, setExamStarted] = useState(false);
   const [exId, setExId] = useState();
   const webcamRef = useRef(null);
 
@@ -153,21 +154,23 @@ function ExamPage() {
   // Function to calculate score
   const calculateScore = (exam, userResponses) => {
     let score = 0;
-  
+
     exam.questions.forEach((question) => {
       console.log("Question ID:", question.id);
       console.log("Correct Answers:", question.correctAnswers);
       console.log("User Response:", userResponses[question.id]);
-  
+
       // Ensure correctAnswers exists and is an array
-      if (Array.isArray(question.correctAnswers) && question.correctAnswers.includes(userResponses[question.id])) {
+      if (
+        Array.isArray(question.correctAnswers) &&
+        question.correctAnswers.includes(userResponses[question.id])
+      ) {
         score += parseInt(question.marks) || 1; // Convert marks to number, default to 1 if missing
       }
     });
-  
+
     return score;
   };
-  
 
   //Handles exam submission
   const handleSubmitExam = async () => {
@@ -175,15 +178,16 @@ function ExamPage() {
 
     //calculate score
     const score = calculateScore(exam, userResponses);
-    console.log("Score",score);
-    
+    console.log("Score", score);
+
     const submissionData = {
       exId,
       responses: userResponses,
       score,
       submissionTime: new Date().toISOString(),
     };
-    console.log("Submission data:",submissionData)
+    
+    console.log("Submission data:", submissionData);
     try {
       const response = await API.post("/exams/submit-exam", submissionData, {
         withCredentials: true,
@@ -191,6 +195,11 @@ function ExamPage() {
 
       if (response.status === 200) {
         alert("Exam submitted successfully!");
+        setExamStarted(false); // Mark the exam as ended
+        setTimerStarted(false); // Stop the timer
+        setCameraAllowed(false); // Stop the camera
+        setFaceDetected(true); // Reset face detection status
+        setTimeLeft(null); // Clear remaining time
         navigate(`/dashboard/results/${exId}`);
       } else {
         alert("Failed to submit exam. Please try again.");
@@ -216,11 +225,69 @@ function ExamPage() {
     }, 1000);
   };
 
+   // Fullscreen Mode Toggle (Modified to target only exam container)
+   const toggleFullscreen = () => {
+    const elem = document.querySelector(".exam-container");
+    if (elem.requestFullscreen) {
+      elem.requestFullscreen();
+    } else if (elem.mozRequestFullScreen) {
+      elem.mozRequestFullScreen();
+    } else if (elem.webkitRequestFullscreen) {
+      elem.webkitRequestFullscreen();
+    } else if (elem.msRequestFullscreen) {
+      elem.msRequestFullscreen();
+    }
+  };
+
+  // Handle Start Exam Button
+  const handleStartExam = () => {
+    setExamStarted(true);
+    toggleFullscreen();
+  };
+
+   // Prevent Escape, Tab, and Refresh actions during exam
+   useEffect(() => {
+    const preventActions = (e) => {
+      if (examStarted) {
+        const forbiddenKeys = ["Escape", "Tab", "F5", "F11"];
+  
+        if (forbiddenKeys.includes(e.key) || (e.ctrlKey && e.key === "Tab")) {
+          e.preventDefault();
+          alert("⚠ You cannot exit or refresh the exam once it has started.");
+          handleSubmitExam();
+        }
+      }
+    };
+  
+    const handleVisibilityChange = () => {
+      if (document.hidden && examStarted) {
+        alert("⚠ You switched tabs! Your exam is being submitted.");
+        handleSubmitExam();
+      }
+    };
+  
+    document.addEventListener("keydown", preventActions);
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+  
+    return () => {
+      document.removeEventListener("keydown", preventActions);
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+    };
+  }, [examStarted]);
+  
+
   if (loading) return <p>Loading exam...</p>;
   if (!exam) return <p>Exam not found.</p>;
 
   return (
-    <div className="exam-container">
+    <div className={`exam-container ${examStarted ? "fullscreen" : ""}`}>
+      {!examStarted && (
+        <div>
+          <button onClick={handleStartExam}>Take Exam</button>
+        </div>
+      )}
+      {examStarted && (
+        <>
       <h1>{exam.testPaperName}</h1>
       <p>
         <strong>Subject:</strong> {exam.subject}
@@ -228,7 +295,7 @@ function ExamPage() {
       <p>
         <strong>Time Allowed:</strong> {exam.timeAllowed} minutes
       </p>
-      
+
       <div className="camera-container">
         <Webcam
           audio={false}
@@ -264,7 +331,7 @@ function ExamPage() {
           <button onClick={handleSubmitExam}>Submit Exam</button>
         </>
       )}
-      
+
       {showCameraModal && (
         <div className="camera-warning-modal">
           <div className="camera-warning-modal-content">
@@ -284,7 +351,10 @@ function ExamPage() {
             </button>
           </div>
         </div>
+        
       )}
+      </>
+    )}
     </div>
   );
 }
