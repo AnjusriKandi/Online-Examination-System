@@ -15,6 +15,7 @@ function Profile() {
         const res = await API.get("/exams/tests-performance", {
           withCredentials: true,
         });
+        console.log(res.data);
         setTestData(res.data);
       } catch (error) {
         console.error("Error fetching test data:", error);
@@ -30,8 +31,9 @@ function Profile() {
   // Ensure testData is valid and contains scores
   const categories = { "<40%": 0, "40-70%": 0, ">70%": 0 };
   testData.forEach((test) => {
-    if (test.score < 40) categories["<40%"]++;
-    else if (test.score < 70) categories["40-70%"]++;
+    const ts=test.score/20*100;
+    if (ts < 40) categories["<40%"]++;
+    else if (ts < 70) categories["40-70%"]++;
     else categories[">70%"]++;
   });
 
@@ -75,7 +77,7 @@ function Profile() {
         <div className="profile-chart">
           <h2>Test Performance</h2>
           {pieData.length > 0 ? (
-            <PieChart width={300} height={300}>
+            <PieChart className="chart" width={300} height={300}>
               <Pie
                 data={pieData}
                 cx={150}

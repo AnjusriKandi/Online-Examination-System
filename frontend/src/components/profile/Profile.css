@@ -46,12 +46,17 @@
   border: 4px solid #007bff;
 }
 
+.chart {
+  margin-left:140px;
+  margin-top: 30px;
+}
 
 .profile-chart h2 {
   font-size: 22px;
   margin-bottom: 20px;
   color: #333;
 }
+
 
 /* Test Attempts Section */
 .test-attempts {
@@ -212,7 +217,7 @@
   align-items: center;
   justify-content: flex-start;
   padding-bottom: 80px; /* Adds space for footer */
-}  
+}
 
 .profile-container {
   display: flex;
