@@ -36,8 +36,8 @@ A web-based platform for conducting secure and scalable online exams with featur
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/yourusername/online-exam-system.git
-cd online-exam-system
+git clone https://github.com/AnjusriKandi/Online-Examination-System.git
+cd Online-Examination-System
 ```
 
 ### 2. Set up the backend
