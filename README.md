@@ -19,7 +19,7 @@ A web-based platform for conducting secure and scalable online exams with featur
 
 | Layer         | Technology                |
 |---------------|---------------------------|
-| Frontend      | React.js, Tailwind CSS     |
+| Frontend      | React.js, CSS     |
 | Backend       | Node.js, Express.js        |
 | Database      | MongoDB                    |
 | Authentication| JWT                        |
