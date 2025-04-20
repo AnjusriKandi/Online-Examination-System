@@ -1,6 +1,6 @@
 ﻿# Online-Examination-System
 
-A web-based platform for conducting secure and scalable online exams with features like user authentication, exam creation, live proctoring, and result generation. Designed for teachers and students to facilitate academic assessments in a seamless, digital format.
+<p align="justify">A web-based platform for conducting secure and scalable online exams with features like user authentication, exam creation, live proctoring, and result generation. Designed for teachers and students to facilitate academic assessments in a seamless, digital format.</p>
 
 ---
 
