@@ -74,4 +74,4 @@ npm run dev
 - Speech detection for enhanced proctoring
 
 
-
+![Contributor Pie Chart](contributor-pie.png)
