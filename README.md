@@ -73,5 +73,3 @@ npm run dev
 - Mobile responsive UI for student access
 - Speech detection for enhanced proctoring
 
-
-![Contributor Pie Chart](contributor-pie.png)
