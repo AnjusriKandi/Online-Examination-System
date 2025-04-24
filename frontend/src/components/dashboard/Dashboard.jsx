@@ -9,7 +9,7 @@ import { useLocation } from "react-router-dom";
 function Dashboard() {
   const navigate = useNavigate();
   const { LogoutUser, currentUser} = useContext(userLoginContext);
-
+  //location
   const location = useLocation();
   const isExamPage = location.pathname.includes("/dashboard/exam/");
   // Get stored active section or default to profile
