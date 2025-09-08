@@ -75,3 +75,5 @@ npm run dev
 
 
 
+
+![Contributor Pie Chart](contributor-pie.png)
