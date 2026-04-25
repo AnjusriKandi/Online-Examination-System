@@ -1,8 +1,17 @@
 import "./Footer.css"
 import { Link } from "react-router-dom";
+import {useLocation} from "react-router-dom";
+
 function Footer() {
+
+  const location=useLocation();
+  const isExamPage=location.pathname.includes("/dashboard/exam/");
+  
     return(
-        <footer>
+      <div className={`${isExamPage ? "exam-mode" : ""}`}>
+        {!isExamPage &&(
+        
+        <footer >
       <div className="contact-details">
         <div>
           <h5>Contact Us</h5>
@@ -16,6 +25,8 @@ function Footer() {
         
       </div>
     </footer>
+    )}
+    </div>
     )
 }
 

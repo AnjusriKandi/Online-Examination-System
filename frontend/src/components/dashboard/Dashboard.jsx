@@ -4,11 +4,14 @@ import { Link, useNavigate } from "react-router-dom";
 import { useContext } from "react";
 import { userLoginContext } from "../../contexts/userLoginContext";
 import { Outlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 function Dashboard() {
   const navigate = useNavigate();
   const { LogoutUser, currentUser} = useContext(userLoginContext);
-
+  
+  const location = useLocation();
+  const isExamPage = location.pathname.includes("/dashboard/exam/");
   // Get stored active section or default to profile
   const getStoredSection = () => {
     if (localStorage.getItem("isNewUser") === "true") {
@@ -35,19 +38,19 @@ function Dashboard() {
   };
 
   return (
-    <div className="dashboard-layout">
+    <div className={`dashboard-layout ${isExamPage ? "exam-mode" : ""}`}>
+      {!isExamPage &&(
       <div className="dashboard-sidebar">
         <Link to="/dashboard/exams">Exams</Link> 
         <Link to="/">Notifications</Link>
         <Link to="/">Detailed Analysis</Link>
-        <Link to="/dashboard/profile">Profile</Link>
         <Link to="/dashboard/updateProfile">Update Profile</Link>
         {currentUser?.role === "admin" && (
           <Link to="/dashboard/verify-teacher">Verification</Link>
         )}
         <Link to="/dashboard/changepassword">Change Password</Link>
         <button onClick={handleLogout} className="logout-btn">Logout</button>
-      </div>
+      </div>)}
 
       <div className="dashboard-main-content">
         <Outlet />

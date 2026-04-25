@@ -18,9 +18,14 @@ const studentRoutes=require("./routes/studentRoutes");
 const userRoutes = require("./routes/userRoutes");
 const examRoutes=require ("./routes/examRoutes");
 const teacherRoutes=require("./routes/teacherRoutes");
+<<<<<<< HEAD
 const profileRoutes = require("./routes/profileRoutes");
 
 // Add Profile Route
+=======
+const classroomRoutes=require("./routes/classroomRoutes");
+
+>>>>>>> fd4dc0de8298dc333c658743bedd5ce969a35c98
 //Middlewares
 app.use(cors({
   origin: process.env.FRONTEND_URL || "http://localhost:5173",// Frontend URL
@@ -33,8 +38,12 @@ app.use(cookieParser());
 app.use("/api/user", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/teacher", teacherRoutes);
+<<<<<<< HEAD
 app.use("/api/profile", profileRoutes);
 
+=======
+app.use("/api/classrooms", classroomRoutes);
+>>>>>>> fd4dc0de8298dc333c658743bedd5ce969a35c98
 
 //Connect to MongoDB
 mongoose

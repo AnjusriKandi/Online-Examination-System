@@ -11,7 +11,8 @@ const examSchema = new mongoose.Schema({
   generalInstructions: { type: String },
   examType: { type: String, enum: ["question-paper", "online-test"], required: true },
   examLink: { type: String, default: "" },
-  questions: { type: Array, default: [] }, // Store questions as an array of objects
+  questions: { type: Array, default: [] },
+  classroom: { type: mongoose.Schema.Types.ObjectId, ref: "Classroom" },
 }, { timestamps: true });
 
 const Exam = mongoose.model("Exam", examSchema);

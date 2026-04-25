@@ -4,7 +4,8 @@
 }
 
 .dashboard-sidebar {
-  background-color: rgb(234, 248, 253);
+  background-color: rgb(208, 229, 241);/* rgb(234, 248, 253); */
+  
   width: 250px;
   display: flex;
   flex-direction: column;
@@ -44,12 +45,3 @@
   overflow-y: auto;
 }
 
-/* .logout-button {
-  margin-top: auto; /* Pushes Logout to the bottom 
-  background: #d9534f;
-}
-
-.logout-button:hover {
-  background: #c9302c;
-}
- */

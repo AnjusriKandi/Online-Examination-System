@@ -3,8 +3,7 @@ import { useContext, useState, useEffect } from "react";
 import { userLoginContext } from "../../contexts/userLoginContext";
 import API from "../../api/axios";
 import jsPDF from "jspdf";
-import { TiThMenu } from "react-icons/ti";
-import CreateExam from "../createExam/CreateExam"; // ✅ Importing CreateExam component
+import CreateExam from "../createExam/CreateExam";
 
 function Exams() {
   const { currentUser } = useContext(userLoginContext);
@@ -13,34 +12,68 @@ function Exams() {
   const [showInstructions, setShowInstructions] = useState(false);
   const [agreed, setAgreed] = useState(false);
   const [examLink, setExamLink] = useState("");
-  const [showCreateExam, setShowCreateExam] = useState(false); // ✅ Track create exam modal
+  const [showCreateExam, setShowCreateExam] = useState(false); // Track create exam modal
 
   const [groups, setGroups] = useState([]);
   const [selectedGroup, setSelectedGroup] = useState(null);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isGroupModalOpen, setIsGroupModalOpen] = useState(false);
+  const [studentExams, setStudentExams] = useState([]);
 
-  const toggleMenu = (examId) => {
-    setOpenMenuId(openMenuId === examId ? null : examId);
-  };
-
+  const isTeacher = currentUser?.role === "teacher";
+  const isStudent = currentUser?.role === "student";
+  const [examId, setExamId] = useState(null);
+ 
+  //get all groups user is part of
   const handleOpenGroupModal = async () => {
-    if (!currentUser || !currentUser.id) {
+    if (!currentUser || !currentUser._id) {
       console.error("User is not logged in or user ID is missing.");
       return;
     }
 
-    setIsModalOpen(true);
+    setIsGroupModalOpen(true);
     try {
-      const response = await API.get(`/groups/user/${currentUser.id}`);
-      setGroups(response.data);
+      const response = await API.get("/classrooms/", { withCredentials: true });
+      console.log("Groups fetched:", response.data);
+      if (Array.isArray(response.data.classrooms)) {
+        setGroups(response.data.classrooms);
+      } else {
+        console.error("Expected an array but got:", response.data);
+        setGroups([]); // Fallback to empty array
+      }
     } catch (error) {
       console.error("Error fetching groups:", error);
+      setGroups([]); // Fallback to empty array in case of an error
     }
   };
 
-  // ✅ Fetch exams from backend
+  //get all exams posted in group for students
   useEffect(() => {
+    const fetchStudentExams = async () => {
+      if(currentUser.role!=='student')
+        return;
+      console.log("Fetching student exams...")
+      try {
+        const res = await API.get("/exams/student-get-exams", {
+          withCredentials: true,
+        });
+        console.log("Exams available for student:", res.data);
+        setStudentExams(res.data);
+      } catch (error) {
+        console.error("Error fetching student exams:", error);
+      }
+    };
+
+    if (isStudent) {
+      fetchStudentExams();
+    }
+  }, [isStudent]);
+
+  // Fetch created exams from backend
+  useEffect(() => {
+    
     const fetchExams = async () => {
+      if(currentUser.role!=='teacher')
+        return;
       try {
         const res = await API.get("/exams/teacher-get-exams", {
           withCredentials: true,
@@ -54,11 +87,13 @@ function Exams() {
     fetchExams();
   }, []);
 
+  //Open instructions modal
   const openInstructionsModal = (link) => {
     setExamLink(link);
     setShowInstructions(true);
   };
 
+  //Navigate to ExamPage
   const handleTakeExam = () => {
     if (agreed) {
       window.open(examLink, "_blank");
@@ -66,6 +101,7 @@ function Exams() {
     }
   };
 
+  //Generate PDF
   const generatePDF = (questions, title) => {
     const doc = new jsPDF();
     doc.setFontSize(16);
@@ -77,7 +113,11 @@ function Exams() {
 
       if (q.options) {
         q.options.forEach((opt, i) => {
-          doc.text(`  ${String.fromCharCode(65 + i)}. ${opt}`, 15, 30 + index * 10 + i * 5);
+          doc.text(
+            `  ${String.fromCharCode(65 + i)}. ${opt}`,
+            15,
+            30 + index * 10 + i * 5
+          );
         });
       }
     });
@@ -86,8 +126,8 @@ function Exams() {
   };
 
   const handleGroupSelect = (group) => {
+    console.log(group);
     setSelectedGroup(group);
-    setIsModalOpen(false);
   };
 
   const handlePostToGroup = async () => {
@@ -95,22 +135,28 @@ function Exams() {
       alert("Please select a group first!");
       return;
     }
+    
 
     const postData = {
-      content: "Your post content here...",
-      groupId: selectedGroup._id,
-      userId: currentUser?.id,
+      examId, // Pass the exam ID
+      groupId: selectedGroup._id, // Associate exam with the selected group
+      postedBy: currentUser._id, // The teacher posting the exam
     };
+    console.log(postData);
 
     try {
-      const res = await API.post("/posts/group", { withCredentials: true });
-      console.log("Post submitted: ", res.data);
+      const res = await API.post("/exams/post-to-group", postData, {
+        withCredentials: true,
+      });
+      console.log("Exam posted to group:", res.data);
+      alert("Exam successfully posted to the group!");
     } catch (error) {
-      console.error(error);
+      console.error("Error posting exam to group:", error);
+      alert("Failed to post exam to group.");
     }
   };
 
-  // ✅ Handle newly created exam and update list
+  // Handle newly created exam and update list
   const handleExamCreated = (newExam) => {
     setExams([...exams, newExam]); // Append new exam to list
     setShowCreateExam(false); // Hide create exam form
@@ -120,27 +166,33 @@ function Exams() {
     <div className="exams-container">
       <h1 className="exam-heading">Exams</h1>
 
-      {/* ✅ Show Create Exam form if clicked */}
+      {/* Show Create Exam form if clicked */}
       {showCreateExam ? (
         <CreateExam onExamCreated={handleExamCreated} />
       ) : (
         <>
-          <div className="exam-intro">
-            <p>Click the button to conduct a new exam</p>
-            <button className="create-exam-btn" onClick={() => setShowCreateExam(true)}>
-              Create Exam
-            </button>
-          </div>
-
+          {isTeacher && (
+            <div className="exam-intro">
+              <p>Click the button to conduct a new exam</p>
+              <button
+                className="create-exam-btn"
+                onClick={() => setShowCreateExam(true)}
+              >
+                Create Exam
+              </button>
+            </div>
+          )}
+          
           <div className="created-exams">
-            <h2>Your Created Exams</h2>
+            {/* <h2>Your Created Exams</h2> */}
             <hr />
+            {isTeacher && (
             <div className="created-exam">
               {exams.length === 0 ? (
                 <p>No exams created yet.</p>
               ) : (
                 exams.map((exam) => (
-                  <div key={exam.id} className="exam-card">
+                  <div key={exam._id} className="exam-card">
                     <img
                       src="https://cdn3.iconfinder.com/data/icons/immigration-process/273/migrate-migration-004-1024.png"
                       alt="Exam image"
@@ -149,30 +201,86 @@ function Exams() {
                     <hr />
                     <div className="exam-header">
                       <h3>{exam.testPaperName}</h3>
-                      <div className="menu-container">
-                        <TiThMenu className="menu-icon" onClick={() => toggleMenu(exam.id)} />
-                        {openMenuId === exam.id && (
-                          <div className="dropdown-menu">
-                            <button onClick={handleOpenGroupModal}>Post in Group</button>
-                          </div>
-                        )}
-                      </div>
                     </div>
                     <p className="subject">Subject : {exam.subject}</p>
-                    <p className="numQuestions">📄 Questions: {exam.numQuestions}</p>
-                    <p className="time-allotted">⏳ Time: {exam.timeAllowed} mins</p>
+                    <p className="numQuestions">
+                      📄 Questions: {exam.numQuestions}
+                    </p>
+                    <p className="time-allotted">
+                      ⏳ Time: {exam.timeAllowed} mins
+                    </p>
 
                     {exam.examType === "online-test" ? (
-                      <button onClick={() => openInstructionsModal(exam.examLink)}>Take Exam</button>
+                        <button
+                          onClick={() => {
+                            setExamId(exam._id);
+                            handleOpenGroupModal();
+                          }}
+                        >
+                          Post Exam
+                        </button>
                     ) : (
-                      <button className="pdf-btn" onClick={() => generatePDF(exam.questions, exam.testPaperName)}>
+                      <button
+                        className="pdf-btn"
+                        onClick={() =>
+                          generatePDF(exam.questions, exam.testPaperName)
+                        }
+                      >
                         📄 Download PDF
                       </button>
                     )}
                   </div>
+                  
                 ))
               )}
             </div>
+            )}
+          
+            {isStudent && (
+              <div className="created-exam">
+                {studentExams.length === 0 ? (
+                  <p>No exams created yet.</p>
+                ) : (
+                  studentExams.map((exam) => (
+                    <div key={exam._id} className="exam-card">
+                      <img
+                        src="https://cdn3.iconfinder.com/data/icons/immigration-process/273/migrate-migration-004-1024.png"
+                        alt="Exam image"
+                        className="exam-image"
+                      />
+                      <hr />
+                      <div className="exam-header">
+                        <h3>{exam.testPaperName}</h3>
+                      </div>
+                      <p className="subject">Subject : {exam.subject}</p>
+                      <p className="numQuestions">
+                        📄 Questions: {exam.numQuestions}
+                      </p>
+                      <p className="time-allotted">
+                        ⏳ Time: {exam.timeAllowed} mins
+                      </p>
+
+                      {exam.examType === "online-test" ? (
+                        <button
+                          onClick={() => openInstructionsModal(exam.examLink)}
+                        >
+                          Take Exam
+                        </button>
+                      ) : (
+                        <button
+                          className="pdf-btn"
+                          onClick={() =>
+                            generatePDF(exam.questions, exam.testPaperName)
+                          }
+                        >
+                          📄 Download PDF
+                        </button>
+                      )}
+                    </div>
+                  ))
+                )}
+              </div>
+            )}
           </div>
         </>
       )}
@@ -181,7 +289,7 @@ function Exams() {
       {showInstructions && (
         <div className="instruction-modal-overlay">
           <div className="instructrion-modal-content">
-            <h2  >Exam Instructions</h2>
+            <h2>Exam Instructions</h2>
             <p>
               📌 Ensure a stable internet connection throughout the test to
               avoid interruptions.
@@ -211,8 +319,9 @@ function Exams() {
               full-screen mode may lead to warnings or submission.
             </p>
             <p>
-              📌Enable "Do Not Disturb" Mode to block all notifications during the test to minimize
-              distractions. Ensure your device is set accordingly.
+              📌Enable "Do Not Disturb" Mode to block all notifications during
+              the test to minimize distractions. Ensure your device is set
+              accordingly.
             </p>
             <p>
               📌 You may or may not be allowed to retake this test based on exam
@@ -237,6 +346,24 @@ function Exams() {
         </div>
       )}
 
+      {/* Modal for selecting group */}
+      {isGroupModalOpen && (
+        <div className="group-modal-overlay">
+          <div className="group-modal-content">
+            <h2>Select a Group</h2>
+            <ul>
+              {groups.map((group) => (
+                <li key={group._id} onClick={() => handleGroupSelect(group)}>
+                  {group.classroomName}
+                </li>
+              ))}
+            </ul>
+            <button onClick={() => handlePostToGroup()}>Post Exam</button>
+
+            <button onClick={() => setIsGroupModalOpen(false)}>Cancel</button>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

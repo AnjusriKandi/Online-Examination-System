@@ -1,0 +1,139 @@
+.classrooms-container {
+    padding: 20px;
+    width:100%;
+    margin: auto;
+    background-color:rgb(238, 238, 239);
+    /* border: 2px solid black; */
+    border-radius: 10px;
+  }
+  
+  h2 {
+    /* text-align: center; */
+    color: #333;
+  }
+  
+  .classroom-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.classroom-circle {
+    width: 80px;
+    height:80px;
+    
+    color: white;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    font-weight: bold;
+    text-align: center;
+    position: relative;
+    cursor: pointer;
+    transition: all 0.3s ease-in-out;
+    overflow: hidden;
+    flex-direction: column;
+}
+
+.classroom-circle img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+}
+
+.classroom-details {
+    text-align: center;
+    margin-top: 10px;
+}
+
+.classroom-subject {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.menu-button {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  background: rgba(0, 0, 0, 0.6);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 30px;
+  height: 30px;
+  font-size: 18px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.unenroll-button {
+    background: red;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+    cursor: pointer;
+    border: none;
+    margin-top: 5px;
+}
+
+.unenroll-button:hover {
+    background: darkred;
+}
+
+  
+  .modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    width: 350px;
+    text-align: center;
+  }
+  
+  .modal-content input {
+    width: 100%;
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  button {
+    padding: 10px 15px;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px;
+  }
+  
+  button:hover {
+    opacity: 0.8;
+  }
+  
+  .delete-button {
+    background: red;
+    color: white;
+  }
+  
+  .delete-button:hover {
+    background: darkred;
+  }
+  

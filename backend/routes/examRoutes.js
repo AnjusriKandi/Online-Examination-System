@@ -5,6 +5,7 @@ const { v4: uuidv4 } = require("uuid");
 const Submission = require("../models/Submission");
 const router = express.Router();
 const mongoose = require("mongoose");
+const Classroom=require("../models/Classroom");
 
 
 // Create a new exam
@@ -48,19 +49,18 @@ router.post("/create", authMiddleware, async (req, res) => {
 // Get all exams created by the logged-in teacher
 router.get("/teacher-get-exams", authMiddleware, async (req, res) => {
   try {
-    console.log("Requested User : ",!req.user)
+    
     if (!req.user) {
       return res.status(401).json({ message: "Unauthorized" });
     }
-
     const exams = await Exam.find({ createdBy: req.user.id });
-    console.log("Exams created: ",exams);
     res.status(200).json(exams);
   } catch (error) {
     res.status(500).json({ message: "Server error", error });
   }
 });
 
+//get a particular exam data
 router.get("/get-exam/:examId", async (req, res) => {
   try {
     console.log("ExamId: ",req.params.examId);
@@ -159,5 +159,78 @@ router.get("/results/:examId", authMiddleware, async (req, res) => {
     res.status(500).json({ message: "Server error. Please try again later." });
   }
 });
+
+// Get test performance data for a student
+router.get("/tests-performance", authMiddleware, async (req, res) => {
+  try {
+      const userId = req.user.id; // Get user ID from auth middleware
+
+      // Fetch all submissions for the logged-in student
+      const submissions = await Submission.find({ userId });
+
+      if (!submissions.length) {
+          return res.status(404).json({ message: "No test performance data found." });
+      }
+
+      // Map the relevant test data
+      const performanceData = submissions.map(submission => ({
+          examId: submission.examId,
+          score: submission.score,
+          totalMarks:submission.totalMarks,
+      }));
+      console.log("Performance Data: ",performanceData);
+
+      res.status(200).json(performanceData);
+  } catch (error) {
+      console.error("Error fetching test performance:", error);
+      res.status(500).json({ message: "Server error fetching test performance data." });
+  }
+});
+
+
+// POST exam to a group
+router.post("/post-to-group", async (req, res) => {
+  try {
+    const { examId, groupId, postedBy } = req.body;
+    
+    // Find the exam
+    const exam = await Exam.findById(examId);
+    if (!exam) {
+      return res.status(404).json({ message: "Exam not found" });
+    }
+
+
+
+    // Associate the exam with the group
+    exam.classroom = groupId;
+    await exam.save();
+
+    res.status(200).json({ message: "Exam posted to group successfully", exam });
+  } catch (error) {
+    console.error("Error posting exam to group:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
+router.get("/student-get-exams",authMiddleware, async (req, res) => {
+  try {
+    const userId = req.user._id;
+    console.log("User: ",userId)
+    // Find classrooms the student is part of
+    const classrooms=await Classroom.find({ students: { $in: [req.user.id] } }).select("_id");
+
+    // Extract classroom IDs
+    const classroomIds = classrooms.map((classroom) => classroom._id);
+
+    // Find exams assigned to these classrooms
+    const exams = await Exam.find({ classroom: { $in: classroomIds } });
+
+    res.status(200).json(exams);
+  } catch (error) {
+    console.error("Error fetching exams for students:", error);
+    res.status(500).json({ message: "Internal Server Error" });
+  }
+});
+
 
 module.exports = router;

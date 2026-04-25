@@ -1,11 +1,11 @@
-.home-header {
+/* .home-header {
     display: flex;
     justify-content: space-around;
     align-items: center;
-    /* Centers items vertically */
+    /* Centers items vertically 
 
     padding: 10px 0;
-    /* Adds padding */
+    /* Adds padding 
 
     font-size: 18px;
 }
@@ -21,8 +21,8 @@
 
 
   .header-option a {
-    text-decoration: none ; /* Force remove underline */
-    color: inherit ; /* Inherit color from parent */
+    text-decoration: none ; /* Force remove underline 
+    color: inherit ; /* Inherit color from parent 
   }
   
 .header-option {
@@ -47,4 +47,102 @@
     text-decoration-skip-ink: all;
     
 }
+.hamburger{
+    display:none;
+} */
 
+.home-header {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+    padding: 10px 0;
+    font-size: 18px;
+}
+
+.website-name {
+    font-size: 30px;
+    text-decoration: underline;
+    text-underline-offset: 15px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    letter-spacing: 2px;
+
+}
+.header-option a {
+    text-decoration: none ; 
+    color: inherit ;  
+  }
+  
+.header-option {
+    padding: 10px 20px;
+    font-size: 1.2rem;
+    font-weight: 550;
+    cursor: pointer;
+}
+
+.header-arrow {
+    margin-top: 50px;
+    font-size: 22px;
+}
+
+.header-option:hover {
+    text-decoration: underline;
+    text-underline-offset: 20px;
+    text-decoration-thickness: 3px;
+    text-underline-position: below;
+    text-decoration-style: solid;
+    text-decoration-color: rgb(55, 143, 178);
+    text-decoration-skip-ink: all;
+    
+}
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.hamburger {
+    display: none;
+    font-size: 30px;
+    cursor: pointer;
+}
+
+/* Mobile View */
+@media screen and (max-width: 768px) {
+  .nav-links {
+    display: none; /* Hide normal nav links in mobile */
+  }
+
+  .hamburger {
+    display: block; /* Show hamburger in mobile */
+  }
+
+  .mobile-menu {
+    position: absolute;
+    top: 60px;
+    right: 30px;
+    background: white;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0,0,0,0.2);
+    z-index: 100;
+  }
+
+  .mobile-menu a, .mobile-menu button {
+    color: black;
+    text-decoration: none;
+    font-size: 18px;
+    font-weight: 500;
+    text-align: center;
+  }
+
+  .mobile-menu button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 6px;
+  }
+}

@@ -46,7 +46,7 @@ router.post("/login", async (req, res) => {
 
     const isValidPassword = await user.comparePassword(password);
     if (!isValidPassword) return res.status(401).json({ message: "Invalid username or password" });
-
+    console.log("UserId ur49",user._id);
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: "7d" });
 
     res.cookie("examToken", token, {
@@ -55,7 +55,7 @@ router.post("/login", async (req, res) => {
       sameSite: "Strict",
       maxAge: 7 * 24 * 60 * 60 * 1000
     });
-
+    console.log("Login Cookie: ", token);
     res.status(200).json({ message: "Login successful", user });
   } catch (error) {
     console.error("Login error:", error);

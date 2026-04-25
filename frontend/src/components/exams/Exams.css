@@ -504,7 +504,7 @@ textarea {
   padding: 10px;
   transition: transform 0.3s ease-in-out;
   position: relative;
-  text-align: center; /* Ensures text inside is centered */
+  text-align: center; /*Ensures text inside is centered */
 }
 
 .exam-card:hover {
@@ -525,6 +525,7 @@ textarea {
   position: relative;
 }
 
+
 .exam-title {
   flex: 1;
   text-align: center; /* Centers text inside */
@@ -532,13 +533,6 @@ textarea {
   font-weight: bold;
 }
 
-.menu-icon {
-  position: absolute;
-  right: 0; /* Pushes icon to the right */
-  font-size: 24px;
-  cursor: pointer;
-  color: #333;
-}
 
 .exam-link, .pdf-btn {
   display: inline-block;
@@ -627,6 +621,96 @@ textarea {
 }
 
 
+/* Modal Overlay */
+.group-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
 
+/* Modal Content */
+.group-modal-content {
+  background: #fff;
+  padding: 20px;
+  width: 400px;
+  border-radius: 8px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  animation: fadeIn 0.3s ease-in-out;
+}
 
+/* Modal Heading */
+.group-modal-content h2 {
+  margin-bottom: 15px;
+  font-size: 20px;
+  color: #333;
+}
 
+/* Group List */
+.group-modal-content ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.group-modal-content li {
+  padding: 10px;
+  margin: 5px 0;
+  background: #f4f4f4;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background 0.3s;
+}
+
+.group-modal-content li:hover {
+  background: #ddd;
+}
+
+/* Buttons */
+.group-modal-content button {
+  margin: 10px 5px;
+  padding: 10px 15px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.group-modal-content button:first-of-type {
+  background: #007bff;
+  color: white;
+}
+
+.group-modal-content button:first-of-type:disabled {
+  background: #b0c4de;
+  cursor: not-allowed;
+}
+
+.group-modal-content button:last-of-type {
+  background: #ff4d4d;
+  color: white;
+}
+
+.group-modal-content button:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
