@@ -1,0 +1,37 @@
+services:
+  # Backend API Service
+  - type: web
+    name: oes-backend
+    env: node
+    buildCommand: npm install
+    startCommand: npm start
+    rootDir: backend
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: "5000"
+      - key: FRONTEND_URL
+        fromService:
+          type: web
+          name: oes-frontend
+          property: url
+      # Make sure to set MONGO_URI in the Render dashboard manually!
+
+  # Frontend Static Site
+  - type: web
+    name: oes-frontend
+    env: static
+    buildCommand: npm install && npm run build
+    staticPublishPath: dist
+    rootDir: frontend
+    envVars:
+      - key: VITE_API_URL
+        fromService:
+          type: web
+          name: oes-backend
+          property: url
+    routes:
+      - type: rewrite
+        source: /*
+        destination: /index.html

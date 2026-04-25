@@ -53,7 +53,7 @@ function CreateExam({ onExamCreated }) {
   
         if (examType === "online-test") {
           // Generate a unique exam link
-          examLink = `http://localhost:5173/dashboard/exam/${uuidv4()}`;
+          examLink = `${window.location.origin}/dashboard/exam/${uuidv4()}`;
         }
   
         const examData = {

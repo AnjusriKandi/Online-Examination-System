@@ -14,12 +14,16 @@ const app = express(); //express application object
 dotenv.config(); //loads environment variables from a .env file into process.env
 
 //import routes
+const studentRoutes=require("./routes/studentRoutes");
 const userRoutes = require("./routes/userRoutes");
 const examRoutes=require ("./routes/examRoutes");
 const teacherRoutes=require("./routes/teacherRoutes");
+const profileRoutes = require("./routes/profileRoutes");
+
+// Add Profile Route
 //Middlewares
 app.use(cors({
-  origin: "http://localhost:5173",// Frontend URL
+  origin: process.env.FRONTEND_URL || "http://localhost:5173",// Frontend URL
   credentials: true, // Allow sending cookies
 }));
 app.use(express.json());
@@ -29,6 +33,7 @@ app.use(cookieParser());
 app.use("/api/user", userRoutes);
 app.use("/api/exams", examRoutes);
 app.use("/api/teacher", teacherRoutes);
+app.use("/api/profile", profileRoutes);
 
 
 //Connect to MongoDB

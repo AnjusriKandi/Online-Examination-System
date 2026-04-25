@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../../api/axios";
 import "./ChangePassword.css";
 
 function ChangePassword() {
@@ -22,8 +22,8 @@ function ChangePassword() {
     }
 
     try {
-      const response = await axios.put(
-        "http://localhost:5000/api/user/change-password",
+      const response = await API.put(
+        "/user/change-password",
         { oldPassword, newPassword, confirmPassword },
         { withCredentials: true }
       );

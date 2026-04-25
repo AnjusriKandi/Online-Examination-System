@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { userLoginContext } from "../../contexts/userLoginContext";
 import { PieChart, Pie, Cell, Tooltip, Legend } from "recharts";
 import "./Profile.css";
+import API from "../../api/axios";
 
 function Profile() {
   const { currentUser } = useContext(userLoginContext);
@@ -12,8 +13,15 @@ function Profile() {
   const [message, setMessage] = useState("");
 
   useEffect(() => {
-    const storedClassrooms = JSON.parse(localStorage.getItem("classrooms")) || [];
-    setClassrooms(storedClassrooms);
+    async function loadClassrooms() {
+      try {
+        const res = await API.get("/profile/classrooms");
+        setClassrooms(res.data);
+      } catch (error) {
+        console.error("Error fetching classrooms:", error);
+      }
+    }
+    loadClassrooms();
   }, []);
 
   if (!currentUser) return <p>Loading...</p>;
